@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/khayes133/trackingmusic.git"
+    "url": "git+https://github.com/khayes133/Music-Library.git"
   },
   "author": "Kristina Hayes",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/khayes133/trackingmusic/issues"
+    "url": "https://github.com/khayes133/Music-Library/issues"
   },
-  "homepage": "https://github.com/khayes133/trackingmusic#readme",
+  "homepage": "https://github.com/khayes133/Music-Library#readme",
   "engines": {
     "node": ">=14.20.1"
   },
