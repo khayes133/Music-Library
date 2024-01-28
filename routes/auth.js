@@ -5,7 +5,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: `https://musictracker-eb7o.onrender.com/auth/github/callback`
+        callbackURL: `https://cse-341-project-2-vpbn.onrender.com/auth/github/callback`
     },
     function(accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
