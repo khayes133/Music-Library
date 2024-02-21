@@ -5,12 +5,11 @@
     "description": "An API for managing albums and tracks.",
     "version": "1.0.0"
   },
-  "host": "https://musictracker-eb7o.onrender.com",
+  "host": "music-library-jb1z.onrender.com",
   "basePath": "/",
   "schemes": [
     "https"
   ],
-  
   "paths": {
     "/api-docs": {
       "get": {
