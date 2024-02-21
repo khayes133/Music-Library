@@ -5,7 +5,7 @@ const doc = {
     title: 'Music Tracker API',
     description: 'An API for managing albums and tracks.'
   },
-  host: 'https://cse-341-project-2-vpbn.onrender.com/',
+  host: 'music-library-jb1z.onrender.com',
   schemes: ['https']
 };
 
