@@ -6,80 +6,79 @@ let validationRules = {
     title: 'required|string',
     artist: 'required|string',
     album: 'required|string',
-}
+};
+
+const handleValidationError = (res, err) => {
+    res.status(412).json({
+        success: false,
+        message: 'Validation failed',
+        errors: err,
+    });
+};
 
 const getAll = async (req, res) => {
-    // #swagger.tags = ['Tracks']
-    const result = await mongodb.getDatabase().db().collection('tracks').find();
-    result.toArray().then((tracks) => {
-        res.json(tracks);
-    });
+    try {
+        const result = await mongodb.getDatabase().db().collection('tracks').find().toArray();
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
 };
 
 const getById = async (req, res) => {
-     // #swagger.tags = ['Tracks']
-    const trackId = { _id: new ObjectId(req.params.id) };
-    const result = await mongodb.getDatabase().db().collection('tracks').find(trackId);
-    result.toArray().then((track) => {
-        res.status(200).json(track);
-    });
+    try {
+        const trackId = { _id: new ObjectId(req.params.id) };
+        const result = await mongodb.getDatabase().db().collection('tracks').findOne(trackId);
+        if (!result) {
+            return res.status(404).json({ success: false, message: 'Track not found' });
+        }
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
 };
 
 const addTrack = async (req, res) => {
-     // #swagger.tags = ['Tracks']
-    const newTrack = {
-        title: req.body.title,
-        artist: req.body.artist,
-        album: req.body.album,
-    };
+    const newTrack = req.body;
 
-    await validator(newTrack, validationRules, {}, (err, status) => {
-        if (!status) {
-            res.status(412).send({
-                success: false,
-                message: 'Validation failed',
-                data: err,
-            });
+    try {
+        await validator(newTrack, validationRules);
+        const result = await mongodb.getDatabase().db().collection('tracks').insertOne(newTrack);
+        res.status(200).json(result);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            handleValidationError(res, error);
         } else {
-            mongodb.getDatabase().db().collection('tracks').insertOne(newTrack).then((result) => {
-                res.status(200).json(result);
-            });
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
         }
-    }).catch((err) => console.log(err));
+    }
 };
 
 const updateTrack = async (req, res) => {
-     // #swagger.tags = ['Tracks']
     const trackId = { _id: new ObjectId(req.params.id) };
+    const newValues = req.body;
 
-    const newValues = {
-        title: req.body.title,
-        artist: req.body.artist,
-        album: req.body.album,
-    };
-
-    await validator(newValues, validationRules, {}, (err, status) => {
-        if (!status) {
-            res.status(412).send({
-                success: false,
-                message: 'Validation failed',
-                data: err,
-            });
+    try {
+        await validator(newValues, validationRules);
+        const result = await mongodb.getDatabase().db().collection('tracks').updateOne(trackId, { $set: newValues });
+        res.status(200).json(result);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            handleValidationError(res, error);
         } else {
-            mongodb.getDatabase().db().collection('tracks').updateOne(trackId, { $set: newValues }).then((result) => {
-                res.status(200).json(result);
-            });
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
         }
-    }).catch((err) => console.log(err));
+    }
 };
 
 const deleteTrack = async (req, res) => {
-     // #swagger.tags = ['Tracks']
-    const trackId = { _id: new ObjectId(req.params.id) };
-
-    mongodb.getDatabase().db().collection('tracks').deleteOne(trackId).then((result) => {
+    try {
+        const trackId = { _id: new ObjectId(req.params.id) };
+        const result = await mongodb.getDatabase().db().collection('tracks').deleteOne(trackId);
         res.status(200).json(result);
-    });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
 };
 
 module.exports = {
@@ -87,5 +86,5 @@ module.exports = {
     getById,
     addTrack,
     updateTrack,
-    deleteTrack
+    deleteTrack,
 };
