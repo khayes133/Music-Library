@@ -1,15 +1,18 @@
-const { isAuthenticated } = require('../middleware/authenticate');
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
+
 const trackController = require('../controllers/track');
+const { isAuthenticated } = require('../middleware/authenticate');
+const validation = require('../middleware/validate');
 
-router.get('/', isAuthenticated, trackController.getAll);
-router.get('/:id', isAuthenticated, trackController.getById);
+router.get('/', trackController.getAllTracks);
 
-router.post('/add', isAuthenticated, trackController.addTrack);
+router.get('/:id', trackController.getSingleTrack);
 
-router.put('/update/:id', isAuthenticated, trackController.updateTrack);
+router.post('/:id', isAuthenticated, validation.validateTrack, trackController.createTrack);
 
-router.delete('/delete/:id', isAuthenticated, trackController.deleteTrack);
+router.put('/:id', isAuthenticated, validation.validateTrack, trackController.updateTrack);
 
+router.delete('/:id', isAuthenticated, trackController.deleteTrack);
 
 module.exports = router;

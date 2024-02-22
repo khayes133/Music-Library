@@ -1,16 +1,16 @@
 const router = require('express').Router();
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../swagger/swagger.json');
+const passport = require('passport');
 
-router.use('/api-docs', swaggerUi.serve);
-router.get('/api-docs', swaggerUi.setup(swaggerDocument));
+router.use('/', require('./swagger'));
+router.use('/user', require('./user'));
+router.use('/track', require('./track')); 
+router.get('/login', passport.authenticate('github'), (req, res) => {});
 
-router.get('/', (req, res) => {
-    res.send(req.session.user !== undefined ? `Logged in as ${req.session.user.displayName}` : 'Logged out');
+router.get('/logout', function(req, res, next) {
+    req.logout(function(err){
+        if (err) { return next(err); }
+        res.redirect('/');
+    });
 });
-
-router.use('/albums', require('./album'));
-router.use('/tracks', require('./track'));
-//router.use('/auth', require('./auth'));
 
 module.exports = router;
