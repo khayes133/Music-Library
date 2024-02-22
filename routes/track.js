@@ -9,7 +9,7 @@ router.get('/', trackController.getAllTracks);
 
 router.get('/:id', trackController.getSingleTrack);
 
-router.post('/:id', isAuthenticated, validation.validateTrack, trackController.createTrack);
+router.post('/', isAuthenticated, validation.validateTrack, trackController.createTrack);
 
 router.put('/:id', isAuthenticated, validation.validateTrack, trackController.updateTrack);
 
