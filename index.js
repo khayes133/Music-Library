@@ -1,64 +1,27 @@
-const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
-
-const passport = require('passport');
+const express = require('express');
 const session = require('express-session');
-const GitHubStrategy = require('passport-github2').Strategy;
-
 const mongodb = require('./data/database');
+const passport = require('passport');
+
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
 const app = express();
 
-const port = process.env.PORT || 3030;
+port = process.env.port || 8080;
 
-app.use(bodyParser.json())
-  .use(session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: true,
-  }))
-  .use(passport.initialize())
-  .use(passport.session())
-  .use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Change later to only allow our server
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Z-Key');
-  next();
-})
-.use(cors({ methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'] }))
-.use(cors({ origin: '*' }))
-
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/', require('./routes/index.js'));
-
-passport.use(new GitHubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: process.env.CALLBACK_URL
-},
-
-function(accessToken, refreshToken, profile, done) {
-  return done(null, profile);
-}
-));
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
-
-app.get('/', (req, res) => { res.send(req.session.user !== undefined ? `Logged in as ${req.session.user.displayName}` : "Logged Out")});
-
-app.get('/github/callback', passport.authenticate('github', 
-    { failureRedirect: '/api-docs', session: false }), 
-    (req, res) => { 
-      req.session.user = req.user; 
-      res.redirect('/'); 
-    });
-
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use('/', require('./routes'));
 
 mongodb.initDb((err) => {
     if(err) {
