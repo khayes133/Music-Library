@@ -1,26 +1,27 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require("path");
 const passport = require('passport');
 const session = require('express-session');
 const GithubStrategy = require('passport-github2').Strategy;
 const axios = require('axios');
 
-const api = express();
+const app = express();
 const mongodb = require('./data/database');
 
 // API 'use' Setup
-api.use(bodyParser.json());
-api.use(
+app.use(bodyParser.json());
+app.use(
     session({
         secret: 'secret',
         resave: false,
         saveUninitialized: true,
     })
 );
-api.use(passport.initialize());
-api.use(passport.session());
-api.use(
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(
     cors({
         methods: ['POST', 'PUT', 'GET', 'DELETE'],
         origin: '*',
@@ -34,11 +35,11 @@ api.use(
         ],
     })
 );
-api.use(express.json());
-api.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // My Routes
-api.use('/', require('./routes'));
+app.use('/', require('./routes'));
 
 // Passport Setup
 passport.use(
@@ -48,11 +49,34 @@ passport.use(
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
             callbackURL: process.env.CALLBACK_URL,
         },
-        (accessToken, refreshToken, profile, done) => {
-            return done(null, profile);
-        }
-    )
-);
+        async function (accessToken, refreshToken, profile, done) {
+            try {
+                // Search for an existing user by their GitHub ID
+                let user = await User.findOne({ githubId: profile.id });
+        
+                if (user) {
+                  return done(null, user);
+                } else {
+                  console.log(profile._json);
+                  user = await User.create({
+                    githubId: profile._json.id,
+                    name: profile._json.name,
+                    url: profile._json.html_url,
+                    email: profile._json.email || profile._json.blog,
+                    username: profile._json.login,
+                    avatarImg: profile._json.avatar_url,
+                  });
+                  console.log("User created", user)
+        
+                  return done(null, user);
+                }
+              } catch (error) {
+                return done(error, null);
+              }
+            }
+          )
+        );
+
 passport.serializeUser((user, done) => {
     done(null, user);
 });
@@ -60,25 +84,35 @@ passport.deserializeUser((user, done) => {
     done(null, user);
 });
 
-// GitHub OAuth Redirect Route
-api.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
-
-// GitHub OAuth Callback Route
-api.get(
-    '/github/callback',
-    passport.authenticate('github', { failureRedirect: '/login' }),
-    (req, res) => {
-        // Successful authentication, redirect home.
-        res.redirect('/');
-    }
+// Passport Routes
+app.get("/", (req, res) => {
+  res.send(
+    req.session.user !== undefined
+      ? `Logged in as ${req.session.user.name}`
+      : "Logged Out"
+  );
+});
+app.get(
+  "/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: "/api-docs",
+    session: false,
+  }),
+  (req, res) => {
+    req.session.user = req.user;
+    res.redirect("/");
+  }
 );
 
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "./viewsFolder"));
+
 // Exception Catch
-process.on('uncaughtException', (err, origin) => {
-    console.log(
-        process.stderr.fd,
-        `Caught exception: ${err}\nException origin: ${origin}`
-    );
+process.on("uncaughtException", (err, origin) => {
+  console.log(
+    process.stderr.fd,
+    `Caught exception: ${err}\nException origin: ${origin}`
+  );
 });
 
 port = process.env.PORT || 8080;
@@ -87,7 +121,7 @@ mongodb.initDb((err) => {
     if (err) {
         console.log(err);
     } else {
-        api.listen(port, () => {
+        app.listen(port, () => {
             console.log('database listening on ' + port);
         });
     }

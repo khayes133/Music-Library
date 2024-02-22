@@ -6,7 +6,7 @@ const doc = {
     description: 'An API for managing albums and tracks.'
   },
   host: 'music-library-jb1z.onrender.com',
-  schemes: ['https']
+  schemes: ['https', 'http']
 };
 
 const outputFile = './swagger.json';
