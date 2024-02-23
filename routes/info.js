@@ -9,10 +9,17 @@ router.get('/', infoController.getAll);
 
 router.get('/:id', infoController.getSingle);
 
-router.post('/:id', isAuthenticated, validation.saveUserInfo, infoController.createUserInfo);
+router.post('/', infoController.createUserInfo);
+
+router.put('/:id', infoController.updateUserInfo);
+
+router.delete('/:id', infoController.deleteUserInfo);
+
+module.exports = router;
+
+/*
+router.post('/', isAuthenticated, validation.saveUserInfo, infoController.createUserInfo);
 
 router.put('/:id', isAuthenticated, validation.saveUserInfo, infoController.updateUserInfo);
 
-router.delete('/:id', isAuthenticated, infoController.deleteUserInfo);
-
-module.exports = router;
+router.delete('/:id', isAuthenticated, infoController.deleteUserInfo);*/ 
