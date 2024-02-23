@@ -9,10 +9,10 @@ router.get('/', trackController.getAllTracks);
 
 router.get('/:id', trackController.getSingleTrack);
 
-router.post('/', isAuthenticated, validation.validateTrack, trackController.createTrack);
+router.post('/', validation.validateTrack, trackController.createTrack);
 
-router.put('/:id', isAuthenticated, validation.validateTrack, trackController.updateTrack);
+router.put('/:id', validation.validateTrack, trackController.updateTrack);
 
-router.delete('/:id', isAuthenticated, trackController.deleteTrack);
+router.delete('/:id', trackController.deleteTrack);
 
 module.exports = router;
