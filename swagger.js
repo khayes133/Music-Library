@@ -2,7 +2,7 @@ const swaggerAutogen = require('swagger-autogen')();
 
 const doc = {
   info: {
-    title: 'Music Tracker API',
+    title: 'Project 2 with OAuth 2',
     description: 'An API for managing users and tracks.'
   },
   host: 'music-library-jb1z.onrender.com',

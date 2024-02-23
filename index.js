@@ -36,7 +36,12 @@ passport.use(new GitHubStrategy({
 },
 
 function(accessToken, refreshToken, profile, done) {
-  return done(null, profile);
+  var user ={
+    id: profile.username,
+    email: (profile.email.length) ? profile.email[0].value : null,
+    gravatar: profile.gravatar_id
+  }
+  return done(null, user);
 }
 ));
 
