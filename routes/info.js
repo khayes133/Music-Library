@@ -6,15 +6,10 @@ const infoController = require('../controllers/info');
 const validation = require('../middleware/validate');
 
 router.get('/', infoController.getAll);
-
 router.get('/:id', infoController.getSingle);
-
 router.post('/', infoController.createUserInfo);
-
 router.put('/:id', infoController.updateUserInfo);
-
 router.delete('/:id', infoController.deleteUserInfo);
-
 module.exports = router;
 
 /*
