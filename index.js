@@ -20,7 +20,7 @@ app.use(bodyParser.json())
   .use(passport.initialize())
   .use(passport.session())
   .use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Change later to only allow our server
+  res.setHeader('Access-Control-Allow-Origin', '*'); 
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Z-Key');
   next();
@@ -28,7 +28,7 @@ app.use(bodyParser.json())
 .use(cors({ methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'] }))
 .use(cors({ origin: '*' }))
 .use('/', require('./routes/index.js'));
-
+/*
 passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
@@ -55,7 +55,7 @@ app.get('/github/callback', passport.authenticate('github',
       req.session.user = req.user; 
       res.redirect('/'); 
     });
-
+*/
 mongodb.initDb((err) => {
   if (err) {
     console.log(err);
