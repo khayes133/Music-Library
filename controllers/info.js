@@ -112,7 +112,6 @@ const getSingle = async (req, res) => {
  */
 const createUserInfo = async (req, res) => {
     const info = {
-        _id: userId,
         birthday: req.body.birthday,
         color: req.body.color,
         nickname: req.body.nickname,
