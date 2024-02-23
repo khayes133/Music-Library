@@ -123,7 +123,7 @@ const createUserInfo = async (req, res) => {
         city: req.body.city
     };
 
-    const response = await mongodb.getDatabase().db().collection('info').insertOne(info);
+    const response = await mongodb.getDatabase().db('test').collection('info').insertOne(info);
     if (response.acknowledged) {
         res.status(204).send();
     } else {
