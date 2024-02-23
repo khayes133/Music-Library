@@ -5,7 +5,7 @@ const doc = {
     title: 'Project 2 with OAuth 2',
     description: 'An API for managing users and tracks.'
   },
-  host: 'music-library-jb1z.onrender.com',
+  host: 'oauth2isapain.onrender.com',
   schemes: ['https', 'http']
 };
 
