@@ -111,12 +111,6 @@ const getSingle = async (req, res) => {
  *         description: Unknown error while creating user information.
  */
 const createUserInfo = async (req, res) => {
-    if (!ObjectId.isValid(req.params.id)) {
-        res.status(400).json({ error: 'Invalid ID' });
-    }
-
-    const userId = new ObjectId(req.params.id);
-
     const info = {
         _id: userId,
         birthday: req.body.birthday,
