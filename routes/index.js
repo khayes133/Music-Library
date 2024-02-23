@@ -2,8 +2,9 @@ const router = require('express').Router();
 const passport = require('passport');
 
 router.use('/', require('./swagger'));
-router.use('/user', require('./user'));
-router.use('/track', require('./track')); 
+router.use('/users', require('./users'));
+router.use('/info', require('./info'));
+
 router.get('/login', passport.authenticate('github'), (req, res) => {});
 
 router.get('/logout', function(req, res, next) {
@@ -13,4 +14,5 @@ router.get('/logout', function(req, res, next) {
     });
 });
 
-module.exports = router;
+
+module.exports = router;    

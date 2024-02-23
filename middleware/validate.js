@@ -1,48 +1,54 @@
-const { validate } = require('../helper/validate');
+const validator = require('../helper/validate');
 
-const validateUser = async (req, res, next) => {
+const saveUser = async (req, res, next) => {
     const validationRule = {
-        email: 'required|string|email',
-        username: 'required|string',
-        name: 'required|string',
-        ipaddress: 'required|string|min:8'
+        "email": "required|string|email",
+        "username": "required|string",
+        "name": "required|string",
+        "ipaddress": "required|string|min:8"
     };
 
-    try {
-        await validate(req.body, validationRule);
-        next();
-    } catch (error) {
-        res.status(412).json({
-            success: false,
-            message: 'Validation failed',
-            data: error
-        });
-    }
-};
+    await validator(req.body, validationRule, {}, (err, status) => {
+        if (!status) {
+            res.status(412)
+                .send({
+                    success: false,
+                    message: 'Validation failed',
+                    data: err
+                });
+        } else {
+            next();
+        }
+    }).catch( err => console.log(err))
+}
 
-const validateTrack = async (req, res, next) => {
+const saveUserInfo = async(req, res, next) => {
     const validationRule = {
-        title: 'required|string',
-        artist: 'required|string',
-        duration: 'required|integer|min:1', // Assuming duration is in seconds
-        genre: 'required|string',
-        album: 'required|string',
-        releaseDate: 'required|string' 
-    };
-
-    try {
-        await validate(req.body, validationRule);
-        next();
-    } catch (error) {
-        res.status(412).json({
-            success: false,
-            message: 'Validation failed',
-            data: error
-        });
+        "birthday": "required|string",
+        "color": "required|string",
+        "nickname": "required|string",
+        "hairColor": "required|string",
+        "hobby": "required|string",
+        "address": "required|string",
+        "url": "required|string",
+        "city": "required|string"
     }
-};
+
+    await validator(req.body, validationRule, {}, (err, status) => {
+        if (!status) {
+            res.status(412)
+                .send({
+                    success: false,
+                    message: 'Validation failed',
+                    data: err
+                });
+        } else {
+            next();
+        }
+    }).catch( err => console.log(err))
+}
 
 module.exports = {
-    validateUser,
-    validateTrack
+    saveUser,
+    saveUserInfo
 };
