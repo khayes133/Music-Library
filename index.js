@@ -18,7 +18,9 @@ app.use(bodyParser.json())
     saveUninitialized: true,
   }))
   .use(passport.initialize())
+
   .use(passport.session())
+  
   .use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*'); // Change later to only allow our server
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

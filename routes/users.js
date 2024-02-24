@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const usersController = require('../controllers/users');
-//const { isAuthenticated } = require('../middleware/authenticate');
-//const validation = require('../middleware/validate');
+const { isAuthenticated } = require('../middleware/authenticate');
+const validation = require('../middleware/validate');
 
 router.get('/', usersController.getAll);
 
